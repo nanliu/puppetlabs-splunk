@@ -67,11 +67,13 @@
 # Requires: nothing
 #
 class splunk::params (
-  $version      = '5.0.5',
-  $build        = '179365',
-  $src_root     = 'puppet:///modules/splunk',
-  $splunkd_port = '8089',
-  $logging_port = '9997',
+  $version              = '5.0.5',
+  $build                = '179365',
+  $src_root             = 'puppet:///modules/splunk',
+  $splunkd_port         = '8089',
+  $logging_port         = '9997',
+  $forwarder_installdir = undef,
+  $server_installdir    = undef,
 ) {
 
   # Based on the small number of inputs above, we can construct sane defaults
@@ -80,6 +82,14 @@ class splunk::params (
   # Settings common to everything
   $staging_subdir = 'splunk'
 
+  if $::osfamily == 'Windows' {
+    $forwarder_dir = pick($forwarder_installdir, 'C:/Program Files/SplunkUniversalForwarder')
+    $server_dir    = pick($server_installdir, 'C:/Program Files/Splunk')
+  } else {
+    $forwarder_dir = pick($forwarder_installdir, '/opt/splunkforwarder')
+    $server_dir    = pick($server_installdir, '/opt/splunk')
+  }
+
   # Settings common to a kernel
   case $::kernel {
     default: { fail("splunk module does not support kernel ${::kernel}") }
@@ -87,28 +97,28 @@ class splunk::params (
       $path_delimiter       = '/'
       $forwarder_src_subdir = 'universalforwarder/linux'
       $forwarder_service    = [ 'splunk' ]
-      $forwarder_confdir    = '/opt/splunkforwarder/etc/system/local'
+      $forwarder_confdir    = "${forwarder_dir}/etc/system/local"
       $server_src_subdir    = 'splunk/linux'
       $server_service       = [ 'splunk', 'splunkd', 'splunkweb' ]
-      $server_confdir       = '/opt/splunk/etc/system/local'
+      $server_confdir       = "${server_dir}/etc/system/local"
     }
     'SunOS': {
       $path_delimiter       = '/'
       $forwarder_src_subdir = 'universalforwarder/solaris'
       $forwarder_service    = [ 'splunk' ]
-      $forwarder_confdir    = '/opt/splunkforwarder/etc/system/local'
+      $forwarder_confdir    = "${forwarder_dir}/etc/system/local"
       $server_src_subdir    = 'splunk/solaris'
       $server_service       = [ 'splunk', 'splunkd', 'splunkweb' ]
-      $server_confdir       = '/opt/splunk/etc/system/local'
+      $server_confdir       = "${server_dir}/etc/system/local"
     }
     'Windows': {
       $path_delimiter       = '\\'
       $forwarder_src_subdir = 'universalforwarder/windows'
       $forwarder_service    = [ 'SplunkForwarder' ] # UNKNOWN
-      $forwarder_confdir    = 'C:/Program Files/SplunkUniversalForwarder/etc/system/local'
+      $forwarder_confdir    = "${forwarder_dir}/etc/system/local"
       $server_src_subdir    = 'splunk/windows'
       $server_service       = [ 'Splunkd', 'Splunkweb' ] # UNKNOWN
-      $server_confdir       = 'C:/Program Files/Splunk/etc/system/local' # UNKNOWN
+      $server_confdir       = "${server_dir}/etc/system/local"
       $forwarder_install_options = [
         'AGREETOLICENSE=Yes',
         'LAUNCHSPLUNK=0',
@@ -119,6 +129,7 @@ class splunk::params (
         'WINEVENTLOG_FWD_ENABLE=1',
         'WINEVENTLOG_SET_ENABLE=1',
         'ENABLEADMON=1',
+        "INSTALLDIR=\"${forwarder_dir}\"",
       ]
       $server_install_options = [
         'LAUNCHSPLUNK=1',
@@ -190,4 +201,11 @@ class splunk::params (
   $server_pkg_src    = "${src_root}/${server_src_subdir}/${server_src_pkg}"
   $forwarder_pkg_src = "${src_root}/${forwarder_src_subdir}/${forwarder_src_pkg}"
 
+  # A meta resource so providers know where splunk is installed:
+  splunk_config { 'splunk':
+    forwarder_installdir => $forwarder_dir,
+    forwarder_confdir    => $forwarder_confdir,
+    server_installdir    => $server_dir,
+    server_confdir       => $server_confdir,
+  }
 }
