@@ -76,7 +76,7 @@ class splunk (
   splunk_input { 'default_host':
     section => 'default',
     setting => 'host',
-    value   => $::clientcert,
+    value   => $::hostname,
     tag     => 'splunk_server',
   }
   splunk_input { 'default_splunktcp':
