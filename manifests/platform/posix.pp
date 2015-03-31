@@ -57,7 +57,7 @@ class splunk::platform::posix (
   @splunkforwarder_input { 'monitor_varlog':
     section => 'monitor://var/log/',
     setting => 'host',
-    value   => $::clientcert,
+    value   => $::hostname,
     tag     => 'splunk_forwarder',
   }
 
