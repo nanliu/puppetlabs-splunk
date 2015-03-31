@@ -84,7 +84,7 @@ class splunk::forwarder (
   splunkforwarder_input { 'default_host':
     section => 'default',
     setting => 'host',
-    value   => $::clientcert,
+    value   => $::hostname,
     tag     => 'splunk_forwarder',
   }
   splunkforwarder_output { 'tcpout_defaultgroup':
