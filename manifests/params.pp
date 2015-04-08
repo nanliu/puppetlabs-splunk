@@ -119,6 +119,7 @@ class splunk::params (
       $server_src_subdir    = 'splunk/windows'
       $server_service       = [ 'Splunkd', 'Splunkweb' ] # UNKNOWN
       $server_confdir       = "${server_dir}/etc/system/local"
+      $win_forwarder_dir    = regsubst($forwarder_dir, '/', '\\', 'G')
       $forwarder_install_options = [
         'AGREETOLICENSE=Yes',
         'LAUNCHSPLUNK=0',
@@ -129,7 +130,7 @@ class splunk::params (
         'WINEVENTLOG_FWD_ENABLE=1',
         'WINEVENTLOG_SET_ENABLE=1',
         'ENABLEADMON=1',
-        "INSTALLDIR=\"${forwarder_dir}\"",
+        "INSTALLDIR=\"${win_forwarder_dir}\"",
       ]
       $server_install_options = [
         'LAUNCHSPLUNK=1',
