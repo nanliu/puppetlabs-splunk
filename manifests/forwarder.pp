@@ -81,24 +81,24 @@ class splunk::forwarder (
   }
 
   # Declare inputs and outputs specific to the forwarder profile
-  splunkforwarder_input { 'default_host':
-    section => 'default',
-    setting => 'host',
-    value   => $::hostname,
-    tag     => 'splunk_forwarder',
-  }
-  splunkforwarder_output { 'tcpout_defaultgroup':
-    section => 'default',
-    setting => 'defaultGroup',
-    value   => "${server}_${logging_port}",
-    tag     => 'splunk_forwarder',
-  }
-  splunkforwarder_output { 'defaultgroup_server':
-    section => "tcpout:${server}_${logging_port}",
-    setting => 'server',
-    value   => "${server}:${logging_port}",
-    tag     => 'splunk_forwarder',
-  }
+  #splunkforwarder_input { 'default_host':
+  #  section => 'default',
+  #  setting => 'host',
+  #  value   => $::hostname,
+  #  tag     => 'splunk_forwarder',
+  #}
+  #splunkforwarder_output { 'tcpout_defaultgroup':
+  #  section => 'default',
+  #  setting => 'defaultGroup',
+  #  value   => "${server}_${logging_port}",
+  #  tag     => 'splunk_forwarder',
+  #}
+  #splunkforwarder_output { 'defaultgroup_server':
+  #  section => "tcpout:${server}_${logging_port}",
+  #  setting => 'server',
+  #  value   => "${server}:${logging_port}",
+  #  tag     => 'splunk_forwarder',
+  #}
   ini_setting { 'forwarder_splunkd_port':
     path    => "${splunk::params::forwarder_confdir}/web.conf",
     section => 'settings',
