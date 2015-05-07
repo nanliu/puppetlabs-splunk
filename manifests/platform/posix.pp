@@ -54,12 +54,12 @@ class splunk::platform::posix (
   }
 
   # Default inputs/outputs to create on Linux systems
-  @splunkforwarder_input { 'monitor_varlog':
-    section => 'monitor://var/log/',
-    setting => 'host',
-    value   => $::hostname,
-    tag     => 'splunk_forwarder',
-  }
+  #@splunkforwarder_input { 'monitor_varlog':
+  #  section => 'monitor://var/log/',
+  #  setting => 'host',
+  #  value   => $::hostname,
+  #  tag     => 'splunk_forwarder',
+  #}
 
   # Modify virtual service definitions specific to the Linux platform. These
   # are virtual resources declared in the splunk::virtual class, which we
